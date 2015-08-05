@@ -1,0 +1,25 @@
+#yaflo
+{
+	height: 800px;
+}
+
+	#yaflo .screen
+	{
+		width: 70%;
+		height: 100%;
+		background-color: blue;
+	}
+
+		#yaflo .screen canvas
+		{
+			width: 100%;
+			height: 100%;
+		}
+
+	#yaflo .right-panel
+	{
+		height: 100%;
+		width: 25%;
+		float: right;
+		background-color: red;
+	}
