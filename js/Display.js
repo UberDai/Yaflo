@@ -4,11 +4,12 @@
 function YafloDisplay(yaf)
 {
 	var that = this;
-	var translating = false;
-	var selecting = false;
-	var dragLastPos = {x: 0, y: 0};
 
+	this.translating = false;
+	this.selecting = false;
+	this.dragLastPos = {x: 0, y: 0};
 	this.yaflo = yaf;
+	this.selectedObject = null;
 	this.mousePos = {x: 0, y: 0};
 	this.canvas = document.getElementById('screen-canvas');
 	this.ctx = this.canvas.getContext("2d");
@@ -58,8 +59,8 @@ function YafloDisplay(yaf)
 
 	this.translateWorld = function (e)
 	{
-		that.x += e.canvasX - dragLastPos.x;
-		that.y += e.canvasY - dragLastPos.y;
+		that.x -= e.canvasX - that.dragLastPos.x;
+		that.y -= e.canvasY - that.dragLastPos.y;
 	}
 
 	this.resetCamera = function ()
@@ -70,7 +71,7 @@ function YafloDisplay(yaf)
 		that.selecting = false;
 		that.x = 0;
 		that.y = 0;
-		dragLastPos = {x: 0, y: 0};
+		that.dragLastPos = {x: 0, y: 0};
 	}
 
 	this.bind = function ()
@@ -86,14 +87,15 @@ function YafloDisplay(yaf)
 
 	this.onMouseMove = function (e)
 	{
-		if (translating)
-			that.translateWorld(e);
-		else if (selecting)
-			c("Move selection");
-
-		if (translating || selecting)
-			dragLastPos = {x: e.canvasX, y: e.canvasY};
 		that.mousePos = {x: e.canvasX, y: e.canvasY};
+
+		if (that.translating)
+			that.translateWorld(e);
+		else if (that.selecting)
+			that._moveSelectedObject(e);
+
+		if (that.translating || that.selecting)
+			that.dragLastPos = {x: e.canvasX, y: e.canvasY};
 	}
 
 	this.onMouseWheel = function (e)
@@ -113,15 +115,12 @@ function YafloDisplay(yaf)
 
 		if (e.which == 3 || e.which == 1)
 		{
-			translating = e.which == 3 ? true : false;
+			that.translating = e.which == 3 ? true : false;
 
 			if (e.which == 1)
-			{
-				selecting = that._trySelecting(e);
-				//selecting = true;
-			}
-			dragLastPos.x = e.canvasX;
-			dragLastPos.y = e.canvasY;
+				that.selecting = that._trySelecting(e);
+			that.dragLastPos.x = e.canvasX;
+			that.dragLastPos.y = e.canvasY;
 		}
 
 		if (e.which == 2)
@@ -132,9 +131,12 @@ function YafloDisplay(yaf)
 	{
 		if (e.which == 3 || e.which == 1)
 		{
-			translating = e.which == 3 ? false : translating;
-			selecting = e.which == 1 ? false : translating;
-			dragLastPos = {x : 0, y: 0};
+			that.translating = e.which == 3 ? false : that.translating;
+			that.selecting = e.which == 1 ? false : that.selecting;
+			that.dragLastPos = {x : 0, y: 0};
+			if (that.selectedObject != null)
+				that.selectedObject.selected = false;
+			that.selectedObject = null;
 		}
 	}
 
@@ -237,20 +239,40 @@ function YafloDisplay(yaf)
 				)
 			)
 		;
+
+		that.yaflo.select(that.yaflo.states[that.yaflo.states.length - 1]);
 	}
 
 	this._trySelecting = function (e)
 	{
 		var states = that.yaflo.states;
+		var ret = false;
 
 		that.states.forEach(function (state) {
 
-			if (state.collidesWith(e) && typeof state.spawner != "string")
+			if (state.collidesWith(e) && ret == false)
 			{
 				that.yaflo.select(states[states.indexOf(state.spawner)]);
-				return ;
+				that.selectedObject = state;
+				state.selected = true;
+				ret = true;
 			}
-		});	
+		});
+		ret || that.yaflo.select(that.yaflo);
+		c(ret);
+		return ret;
+	}
+
+	this._moveSelectedObject = function (e)
+	{
+		if (!that.selectedObject)
+		{
+			c("No selected object to drag");
+			return ;
+		}
+		that.selectedObject.origin.x = that.mousePos.x;
+		that.selectedObject.origin.y = that.mousePos.y;
+		c("kek", that.mousePos, that.selectedObject);
 	}
 
 	this.drawables.push(new YafloDrawable("grid", this));

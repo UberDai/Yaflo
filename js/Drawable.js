@@ -12,6 +12,7 @@ function YafloDrawable(parent, display, x, y, w, h, r)
 	this.ctx = display.ctx;
 	this.spawner = parent;
 	this.visible = true;
+	this.selected = false;
 	this.x = x || 0;
 	this.y = y || 0;
 	this.w = w || 1;
