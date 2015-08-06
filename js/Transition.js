@@ -12,6 +12,9 @@ function YafloTransition(fromState, toState)
 	this.fromState = fromState;
 	this.toState = toState;
 	this.conditions = [];
+	this.conditions.name = 'Conditions';
+
+	this._properties = [ 'name', 'conditions' ];
 
 	this.isValid = function ()
 	{

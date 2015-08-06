@@ -41,14 +41,14 @@ html, body
 		vertical-align: top;
 	}
 
-		#yaflo .right-panel div
+		#yaflo .right-panel > div
 		{
 			margin-top: 20px;
 			padding: 10px;
 			background-color: red;
 		}
 
-		#yaflo .right-panel div:first-child
+		#yaflo .right-panel > div:first-child
 		{
 			margin-top: 0;
 		}

@@ -8,6 +8,7 @@ function YafloDisplay()
 	var selecting = false;
 	var dragLastPos = {x: 0, y: 0};
 
+	this.mousePos = {x: 0, y: 0};
 	this.canvas = document.getElementById('screen-canvas');
 	this.ctx = this.canvas.getContext("2d");
 	this.event = new YafloDisplayEvent(this);
@@ -75,6 +76,7 @@ function YafloDisplay()
 
 		if (translating || selecting)
 			dragLastPos = {x: e.canvasX, y: e.canvasY};
+		that.mousePos = {x: e.canvasX, y: e.canvasY};
 	}
 
 	this.onMouseWheel = function (e)
@@ -111,7 +113,6 @@ function YafloDisplay()
 	this._draw = function ()
 	{
 		that._updateCanvasSize();
-		//that.ctx.clearRect(0, 0, that.canvas.width, that.canvas.height);
 		that.drawables.forEach(function (drawable) {
 			drawable.draw();
 		});

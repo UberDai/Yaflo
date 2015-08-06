@@ -1,7 +1,7 @@
 
 'use strict';
 
-function YafloDrawable(parent, display)
+function YafloDrawable(parent, display, x, y, w, h)
 {
 	var that = this;
 	var drawFunction = undefined;
@@ -10,8 +10,11 @@ function YafloDrawable(parent, display)
 	this.display = display;
 	this.ctx = display.ctx;
 	this.spawner = parent;
-	this.x = 0;
-	this.y = 0;
+	this.visible = true;
+	this.x = x || 0;
+	this.y = y || 0;
+	this.w = w || 1;
+	this.h = h || 1;
 
 	this._determineDrawMethods = function ()
 	{
@@ -75,8 +78,16 @@ function updateGrid(drawable)
 function drawGrid(drawable)
 {
 	var ctx = drawable.ctx;
+	var rekt = drawable.display.canvas.getBoundingClientRect();
 
-	ctx.rect(drawable.x, drawable.y, 10, 10);
+	ctx.beginPath();
+	ctx.moveTo(drawable.x, 0);
+	ctx.lineTo(drawable.x, rekt.height);
+	ctx.stroke();
+
+	ctx.beginPath();
+	ctx.moveTo(0, drawable.y);
+	ctx.lineTo(rekt.width, drawable.y);
 	ctx.stroke();
 }
 
@@ -92,7 +103,17 @@ function updateTransition(drawable)
 
 function updateCreatingState(drawable)
 {
-	c("Update creating state");
+	drawable.x = drawable.display.mousePos.x + Math.round(drawable.w / 2);
+	drawable.y = drawable.display.mousePos.y - Math.round(drawable.h / 2);
+}
+
+function drawCreatingState(drawable)
+{
+	var ctx = drawable.ctx;
+
+	ctx.beginPath();
+	ctx.arc(drawable.x, drawable.y, drawable.h, 0, 2 * Math.PI);
+	ctx.stroke();
 }
 
 function updateCreatingTransition(drawable)
@@ -108,11 +129,6 @@ function drawState(drawable)
 function drawTransition(drawable)
 {
 	c("Draw transition");
-}
-
-function drawCreatingState(drawable)
-{
-	c("Draw creating state");
 }
 
 function drawCreatingTransition(drawable)

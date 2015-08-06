@@ -27,3 +27,34 @@ Object.prototype.removeElement = function (element)
 
 	return true;
 }
+
+Object.prototype.forEach = function (callback)
+{
+	var exclude = [ 'removeElement', 'forEach' ];
+	var i = 0;
+
+	for (var key in this)
+	{
+		if (exclude.indexOf(key) != -1)
+			continue;
+
+		if (callback(i, this[key]) === false)
+			return ;
+	}
+};
+
+String.prototype.humanize = function ()
+{
+	var str = this;
+
+	for (var i = 0; i < str.length; i++)
+	{
+		if (str[i] == str[i].toUpperCase())
+		{
+			str = str.substr(0, i) +' '+ str[i].toLowerCase() + str.substr(i + 1);
+			i++;
+		}
+	}
+
+	return str[0].toUpperCase() + str.slice(1);
+}
