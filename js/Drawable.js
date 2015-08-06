@@ -6,6 +6,7 @@ function YafloDrawable(parent, display, x, y, w, h, r)
 	var that = this;
 	var drawFunction = undefined;
 	var updateFunction = undefined;
+	var collisionFunction = undefined;
 
 	this.display = display;
 	this.ctx = display.ctx;
@@ -21,38 +22,35 @@ function YafloDrawable(parent, display, x, y, w, h, r)
 	this.fontColor = "black";
 	this.origin = {x: this.x, y: this.y};
 
-	this._determineDrawMethods = function ()
-	{
-		if (that.spawner instanceof YafloState)
-			that.drawFunction = drawState;
-		else if (that.spawner instanceof YafloTransition)
-			that.drawFunction = drawTransition;
-		else if (that.spawner == "state")
-			that.drawFunction = drawCreatingState;
-		else if (that.spawner == "transition")
-			that.drawFunction = drawCreatingTransition;
-		else if (that.spawner == "grid")
-			that.drawFunction = drawGrid;
-	}
-
-	this._determineUpdateMethods = function ()
-	{
-		if (that.spawner instanceof YafloState)
-			that.updateFunction = updateState;
-		else if (that.spawner instanceof YafloTransition)
-			that.updateFunction = updateTransition;
-		else if (that.spawner == "state")
-			that.updateFunction = updateCreatingState;
-		else if (that.spawner == "transition")
-			that.updateFunction = updateCreatingTransition;
-		else if (that.spawner == "grid")
-			that.updateFunction = updateGrid;
-	}
-
 	this._determineMethods = function ()
 	{
-		that._determineDrawMethods();
-		that._determineUpdateMethods();
+		if (that.spawner instanceof YafloState)
+		{
+			that.updateFunction = updateState;
+			that.drawFunction = drawState;
+			that.collisionFunction = collisionState;
+		}
+		else if (that.spawner instanceof YafloTransition)
+		{
+			that.updateFunction = updateTransition;
+			that.drawFunction = drawTransition;
+			that.collisionFunction = collisionTransition;
+		}
+		else if (that.spawner == "state")
+		{
+			that.updateFunction = updateCreatingState;
+			that.drawFunction = drawCreatingState;
+		}
+		else if (that.spawner == "transition")
+		{
+			that.updateFunction = updateCreatingTransition;
+			that.drawFunction = drawCreatingTransition;
+		}
+		else if (that.spawner == "grid")
+		{
+			that.updateFunction = updateGrid;
+			that.drawFunction = drawGrid;
+		}
 	}
 
 	this.draw = function ()
@@ -69,6 +67,14 @@ function YafloDrawable(parent, display, x, y, w, h, r)
 			that.updateFunction(that);
 		else
 			c("No update function linked to this drawable");
+	}
+
+	this.collidesWith = function (e)
+	{
+		if (that.collisionFunction != undefined)
+			return that.collisionFunction(that, e);
+		c("No collision function linked to this drawable");
+		return false;
 	}
 
 	this._determineMethods();
@@ -127,7 +133,14 @@ function drawState(drawable)
 	ctx.font = drawable.fontSize + " " + drawable.font;
 
 	var nameSizeOnCanvas = ctx.measureText(state.name);
-	ctx.fillText(state.name, drawable.x - Math.round(nameSizeOnCanvas.width / 2), drawable.y + 4, (drawable.r * 2) - 7);
+	ctx.fillText(state.name, drawable.x - Math.round(nameSizeOnCanvas.width / 2), drawable.y + 4);
+}
+
+function collisionState(drawable, e)
+{
+	if (Math.sqrt((drawable.x - e.canvasX) * (drawable.x - e.canvasX) + (drawable.y - e.canvasY) * (drawable.y - e.canvasY)) < (drawable.r + 2))
+		return true;
+	return false;
 }
 
 function updateTransition(drawable)
@@ -149,4 +162,3 @@ function drawCreatingTransition(drawable)
 {
 	c("Draw creating transition");
 }
-

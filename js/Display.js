@@ -16,12 +16,28 @@ function YafloDisplay(yaf)
 	this.creatingState = false;
 	this.creatingTransition = false;
 	this.drawables = [];
+	this.states = [];
+	this.transitions = [];
 	this.zoom = 0;
 	this.x = 0;
 	this.y = 0;
 	this.creationTriggers = {
 		state: false,
 		transition : false
+	}
+
+	this.loadYaflo = function ()
+	{
+		if (!that.yaflo.states)
+			return ;
+
+		if (that.yaflo.states.length != that.states.length)
+		{
+			that.yaflo.states.forEach(function (state) {
+
+				that.states.push(new YafloDrawable(state, that));
+			});
+		}
 	}
 
 	this.triggerStateCreation = function ()
@@ -60,6 +76,7 @@ function YafloDisplay(yaf)
 	this.bind = function ()
 	{
 		that.canvas.addEventListener('onContextMenu', that.event.handleEvent, true);
+		that.canvas.addEventListener('dblclick', that.event.handleEvent, true);
 		that.canvas.addEventListener('mousedown', that.event.handleEvent, true);
 		that.canvas.addEventListener('mouseup', that.event.handleEvent, true);
 		that.canvas.addEventListener('mousemove', that.event.handleEvent, true);
@@ -90,14 +107,19 @@ function YafloDisplay(yaf)
 		if (that._creationTriggerOn() && e.which == 1)
 		{
 			that._removeCreationDrawable();
-			that._addStateAtMousePosition(e);
+			that.addStateAtMousePosition(e);
 			that._updateCreationTriggers("");
 		}
 
 		if (e.which == 3 || e.which == 1)
 		{
 			translating = e.which == 3 ? true : false;
-			selecting = e.which == 1 ? true : false;
+
+			if (e.which == 1)
+			{
+				selecting = that._trySelecting(e);
+				//selecting = true;
+			}
 			dragLastPos.x = e.canvasX;
 			dragLastPos.y = e.canvasY;
 		}
@@ -119,6 +141,12 @@ function YafloDisplay(yaf)
 	this._draw = function ()
 	{
 		that._updateCanvasSize();
+		that.states.forEach(function (drawable) {
+			drawable.draw();
+		});
+		that.transitions.forEach(function (drawable) {
+			drawable.draw();
+		});
 		that.drawables.forEach(function (drawable) {
 			drawable.draw();
 		});
@@ -126,6 +154,13 @@ function YafloDisplay(yaf)
 
 	this._update = function ()
 	{
+		that.loadYaflo();
+		that.states.forEach(function (drawable) {
+			drawable.update();
+		});
+		that.transitions.forEach(function (drawable) {
+			drawable.update();
+		});
 		that.drawables.forEach(function (drawable) {
 			drawable.update();
 		});
@@ -187,11 +222,11 @@ function YafloDisplay(yaf)
 		that.canvas.height = rekt.height;
 	}
 
-	this._addStateAtMousePosition = function (e)
+	this.addStateAtMousePosition = function (e)
 	{
 		var state = that.yaflo.createState();
 
-		this.drawables.push(
+		this.states.push(
 			new YafloDrawable(
 					state,
 					this,
@@ -202,6 +237,20 @@ function YafloDisplay(yaf)
 				)
 			)
 		;
+	}
+
+	this._trySelecting = function (e)
+	{
+		var states = that.yaflo.states;
+
+		that.states.forEach(function (state) {
+
+			if (state.collidesWith(e) && typeof state.spawner != "string")
+			{
+				that.yaflo.select(states[states.indexOf(state.spawner)]);
+				return ;
+			}
+		});	
 	}
 
 	this.drawables.push(new YafloDrawable("grid", this));
