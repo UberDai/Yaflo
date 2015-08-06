@@ -8,7 +8,7 @@ function YafloDisplay()
 	var selecting = false;
 	var dragLastPos = {x: 0, y: 0};
 
-	this.canvas = document.getElementById('screen');
+	this.canvas = document.getElementById('screen-canvas');
 	this.event = new YafloDisplayEvent(this);
 	this.zoom = 0;
 	this.x = 0;

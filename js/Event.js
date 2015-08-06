@@ -1,10 +1,9 @@
 
 'use strict';
 
-function YafloDisplayEvent(yaflo)
+function YafloEvent(yaflo)
 {
 	var that = this;
-	var displayer = yaflo;
 
 	this._injectPosition = function (e)
 	{
@@ -20,12 +19,10 @@ function YafloDisplayEvent(yaflo)
 		that._injectPosition(e);
 
 		if (e.type == 'mousemove')
-			displayer.onMouseMove(e);
-		else if (e.type == 'mousewheel')
-			displayer.onMouseWheel(e);
-		else if (e.type == 'mousedown')
-			displayer.onMouseDown(e);
-		else if (e.type == 'mouseup')
-			displayer.onMouseUp(e);
+			that.onMouseMove(e);
+	};
+
+	this.onMouseMove = function (e)
+	{
 	};
 }

@@ -1,12 +1,30 @@
+html, body
+{
+	padding: 0;
+	margin: 0;
+}
+
+.yaflo-container
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
 #yaflo
 {
-	height: 800px;
+	width: 100%;
+	height: 100%;
+	display: table;
 }
 
 	#yaflo .screen
 	{
-		width: 70%;
 		height: 100%;
+		display: table-cell;
+		overflow: hidden;
 	}
 
 		#yaflo .screen canvas
@@ -18,7 +36,32 @@
 	#yaflo .right-panel
 	{
 		height: 100%;
-		width: 25%;
-		float: right;
-		background-color: red;
+		width: 20%;
+		display: table-cell;
+		vertical-align: top;
 	}
+
+		#yaflo .right-panel div
+		{
+			margin-top: 20px;
+			padding: 10px;
+			background-color: red;
+		}
+
+		#yaflo .right-panel div:first-child
+		{
+			margin-top: 0;
+		}
+
+		#yaflo .right-panel h2
+		{
+			margin-top: 0;
+		}
+
+		#yaflo .right-panel .simulator
+		{
+		}
+
+		#yaflo .right-panel .properties-panel
+		{
+		}

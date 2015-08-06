@@ -5,20 +5,37 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<div id="yaflo">
-		<div class="right-panel">
-			<div class="simulator"></div>
-			<div class="properties"></div>
-		</div>
-		<div class="screen">
-			<canvas id="screen" oncontextmenu="return false;"></canvas>
+	<div class="yaflo-container">
+		<div id="yaflo">
+			<div class="screen">
+				<canvas id="screen-canvas" data-role="canvas" oncontextmenu="return false;"></canvas>
+			</div>
+
+			<div class="right-panel">
+				<div class="simulator">
+					<h2>Simulator</h2>
+					<button>Play/Pause</button>
+					<button>Stop</button>
+					<button>Next step</button>
+				</div>
+				<div class="properties">
+					<h2>Properties</h2>
+
+					<div data-role="properties"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 
 	<script type="text/javascript" src="js/util.js"></script>
-	<script type="text/javascript" src="js/YafloDisplayEvent.js"></script>
-	<script type="text/javascript" src="js/YafloDisplay.js"></script>
-	<script type="text/javascript" src="js/YafloEvent.js"></script>
+	<script type="text/javascript" src="js/Display.js"></script>
+	<script type="text/javascript" src="js/DisplayEvent.js"></script>
+	<script type="text/javascript" src="js/State.js"></script>
+	<script type="text/javascript" src="js/Transition.js"></script>
+	<script type="text/javascript" src="js/Drawable.js"></script>
+	<script type="text/javascript" src="js/Event.js"></script>
+	<script type="text/javascript" src="js/TransitionCondition.js"></script>
+	<script type="text/javascript" src="js/Properties.js"></script>
 	<script type="text/javascript" src="js/Yaflo.js"></script>
 	<script type="text/javascript" src="app.js"></script>
 </body>
