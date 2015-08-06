@@ -1,13 +1,14 @@
 
 'use strict';
 
-function YafloDisplay()
+function YafloDisplay(yaf)
 {
 	var that = this;
 	var translating = false;
 	var selecting = false;
 	var dragLastPos = {x: 0, y: 0};
 
+	this.yaflo = yaf;
 	this.mousePos = {x: 0, y: 0};
 	this.canvas = document.getElementById('screen-canvas');
 	this.ctx = this.canvas.getContext("2d");
@@ -43,7 +44,6 @@ function YafloDisplay()
 	{
 		that.x += e.canvasX - dragLastPos.x;
 		that.y += e.canvasY - dragLastPos.y;
-		c("New world position ", this.x, this.y, e.canvasX - dragLastPos.x);
 	}
 
 	this.resetCamera = function ()
@@ -83,11 +83,17 @@ function YafloDisplay()
 	{
 		that.zoom += e.wheelDelta > 0 ? 1 : -1;
 		that.zoom = that.zoom.clamp(-30, 30);
-		c("Zoom level ", that.zoom, e.wheelDelta);
 	}
 
 	this.onMouseDown = function (e)
 	{
+		if (that._creationTriggerOn() && e.which == 1)
+		{
+			that._removeCreationDrawable();
+			that._addStateAtMousePosition(e);
+			that._updateCreationTriggers("");
+		}
+
 		if (e.which == 3 || e.which == 1)
 		{
 			translating = e.which == 3 ? true : false;
@@ -148,6 +154,16 @@ function YafloDisplay()
 		}
 	}
 
+	this._creationTriggerOn = function ()
+	{
+		for (var index in that.creationTriggers)
+		{
+			if (that.creationTriggers[index] == true)
+				return true;
+		}
+		return false;
+	}
+
 	this._removeCreationDrawable = function ()
 	{
 		var toDelete = [];
@@ -171,7 +187,22 @@ function YafloDisplay()
 		that.canvas.height = rekt.height;
 	}
 
+	this._addStateAtMousePosition = function (e)
+	{
+		var state = that.yaflo.createState();
 
+		this.drawables.push(
+			new YafloDrawable(
+					state,
+					this,
+					that.mousePos.x - Math.abs(that.x),
+					that.mousePos.y + that.y,
+					30,
+					30
+				)
+			)
+		;
+	}
 
 	this.drawables.push(new YafloDrawable("grid", this));
 	this.bind();
