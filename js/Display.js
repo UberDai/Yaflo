@@ -9,6 +9,7 @@ function YafloDisplay()
 	var dragLastPos = {x: 0, y: 0};
 
 	this.canvas = document.getElementById('screen-canvas');
+	this.ctx = this.canvas.getContext("2d");
 	this.event = new YafloDisplayEvent(this);
 	this.creatingState = false;
 	this.creatingTransition = false;
@@ -26,7 +27,7 @@ function YafloDisplay()
 		that._updateCreationTriggers("state");
 
 		if (that.creationTriggers.state == true)
-			that.drawables.push(new YafloDrawable("state"));
+			that.drawables.push(new YafloDrawable("state", that));
 	}
 
 	this.triggerTransitionCreation = function ()
@@ -34,7 +35,7 @@ function YafloDisplay()
 		that._updateCreationTriggers("transition");
 
 		if (that.creationTriggers.transition == true)
-			that.drawables.push(new YafloDrawable("transition"));
+			that.drawables.push(new YafloDrawable("transition", that));
 	}
 
 	this.translateWorld = function (e)
@@ -109,6 +110,8 @@ function YafloDisplay()
 
 	this._draw = function ()
 	{
+		that._updateCanvasSize();
+		//that.ctx.clearRect(0, 0, that.canvas.width, that.canvas.height);
 		that.drawables.forEach(function (drawable) {
 			drawable.draw();
 		});
@@ -150,7 +153,7 @@ function YafloDisplay()
 
 		that.drawables.forEach(function (drawable, index) {
 
-			if (typeof drawable.spawner == "string")
+			if (drawable.spawner == "state" || drawable.spawner == "transition")
 				toDelete.push(index);
 		});
 
@@ -159,6 +162,17 @@ function YafloDisplay()
 		});
 	}
 
+	this._updateCanvasSize = function ()
+	{
+		var rekt = that.canvas.getBoundingClientRect();
+
+		that.canvas.width = rekt.width;
+		that.canvas.height = rekt.height;
+	}
+
+
+
+	this.drawables.push(new YafloDrawable("grid", this));
 	this.bind();
 	this._loop();
 }
