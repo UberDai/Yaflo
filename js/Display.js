@@ -270,8 +270,8 @@ function YafloDisplay(yaf)
 			c("No selected object to drag");
 			return ;
 		}
-		that.selectedObject.origin.x = that.mousePos.x;
-		that.selectedObject.origin.y = that.mousePos.y;
+		that.selectedObject.origin.x = that.mousePos.x + that.x;
+		that.selectedObject.origin.y = that.mousePos.y + that.y;
 		c("kek", that.mousePos, that.selectedObject);
 	}
 
