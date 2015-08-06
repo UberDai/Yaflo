@@ -52,6 +52,9 @@ function Yaflo(config)
 
 	this.addVariable = function (name, value)
 	{
+		if (that.variables[name] != undefined)
+			return ;
+		
 		value || (value = 0);
 
 		that.variables[name] = value;

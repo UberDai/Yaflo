@@ -74,7 +74,7 @@ function YafloTransitionCondition(transition, formula)
 	this.getLValue = function ()
 	{
 		if (that.lType == 'variable')
-			return transition.fromState.yaflo.variables[that.lValue];
+			return transition.fromState.yaflo.simulator.variables[that.lValue];
 
 		return that.lValue;
 	};
@@ -97,7 +97,7 @@ function YafloTransitionCondition(transition, formula)
 	this.getRValue = function ()
 	{
 		if (that.rType == 'variable')
-			return transition.fromState.yaflo.variables[that.rValue];
+			return transition.fromState.yaflo.simulator.variables[that.rValue];
 
 		return that.rValue;
 	};

@@ -11,14 +11,25 @@ function YafloTransition(fromState, toState)
 	this.name = 'Transition '+ yaflotransitioncount;
 	this.fromState = fromState;
 	this.toState = toState;
+	this.priority = 0;
 	this.conditions = [];
 	this.conditions.name = 'Conditions';
 
-	this._properties = [ 'name', 'conditions' ];
+	this._properties = [ 'name', 'conditions', 'priority' ];
 
 	this.isValid = function ()
 	{
-		return false;
+		var result = true;
+
+		_.each(that.conditions, function (condition) {
+			if (condition.test() === false)
+			{
+				result = false;
+				return false;
+			}
+		});
+
+		return result;
 	};
 
 	this.remove = function ()
