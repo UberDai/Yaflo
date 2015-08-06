@@ -12,6 +12,8 @@ function YafloState(yaflo)
 	this.name = 'State '+ yaflostatecount;
 	this.transitions = [];
 
+	this._properties = [ 'name' ];
+
 	this.linkTo = function (state)
 	{
 		if (that.isLinkedTo(state))

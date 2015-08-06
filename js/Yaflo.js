@@ -5,14 +5,18 @@ function Yaflo(config)
 {
 	var that = this;
 
+	this.name = 'Yaflo'
 	this.config = config;
 	this.canvas = config.container.querySelector('[data-role="canvas"]');
 	this.event = new YafloEvent(this);
 	this.properties = new YafloProperties(this);
+	this.simulator = new YafloSimulator(this);
 
 	this.states = [];
 	this.defaultState = null;
-	this.variables = {};
+	this.variables = { name: 'Variables', _properties: [] };
+
+	this._properties = [ 'variables' ];
 
 	this.bind = function ()
 	{
@@ -31,16 +35,33 @@ function Yaflo(config)
 		return state;
 	};
 
-	this.updateSize = function ()
-	{
-	};
-
 	this.select = function (object)
 	{
 		this.selectedObject = object;
 
-		if (object !== null)
-			that.properties.showProperties(object);
+		that.updateProperties();
+	};
+
+	this.updateProperties = function ()
+	{
+		if (that.selectedObject)
+			that.properties.showProperties(that.selectedObject, true);
+		else
+			that.properties.clearProperties();
+	};
+
+	this.addVariable = function (name, value)
+	{
+		value || (value = 0);
+
+		that.variables[name] = value;
+		that.variables._properties.push(name);
+	};
+
+	this.removeVariable = function (name)
+	{
+		delete that.variables[name];
+		that.variables._properties.removeElement(name);
 	};
 
 	this.bind();
