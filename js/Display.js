@@ -10,9 +10,32 @@ function YafloDisplay()
 
 	this.canvas = document.getElementById('screen-canvas');
 	this.event = new YafloDisplayEvent(this);
+	this.creatingState = false;
+	this.creatingTransition = false;
+	this.drawables = [];
 	this.zoom = 0;
 	this.x = 0;
 	this.y = 0;
+	this.creationTriggers = {
+		state: false,
+		transition : false
+	}
+
+	this.triggerStateCreation = function ()
+	{
+		that._updateCreationTriggers("state");
+
+		if (that.creationTriggers.state == true)
+			that.drawables.push(new YafloDrawable("state"));
+	}
+
+	this.triggerTransitionCreation = function ()
+	{
+		that._updateCreationTriggers("transition");
+
+		if (that.creationTriggers.transition == true)
+			that.drawables.push(new YafloDrawable("transition"));
+	}
 
 	this.translateWorld = function (e)
 	{
@@ -39,6 +62,7 @@ function YafloDisplay()
 		that.canvas.addEventListener('mouseup', that.event.handleEvent, true);
 		that.canvas.addEventListener('mousemove', that.event.handleEvent, true);
 		that.canvas.addEventListener('mousewheel', that.event.handleEvent, true);
+		document.addEventListener('keydown', that.event.handleEvent, true);
 	}
 
 	this.onMouseMove = function (e)
@@ -83,5 +107,58 @@ function YafloDisplay()
 		}
 	}
 
+	this._draw = function ()
+	{
+		that.drawables.forEach(function (drawable) {
+			drawable.draw();
+		});
+	}
+
+	this._update = function ()
+	{
+		that.drawables.forEach(function (drawable) {
+			drawable.update();
+		});
+	}
+
+	this._loop = function ()
+	{
+		that._update();
+		that._draw();
+		window.requestAnimationFrame(that._loop);
+	}
+
+	this._updateCreationTriggers = function (trigger)
+	{
+		for (var index in that.creationTriggers)
+		{
+			var val = that.creationTriggers[index];
+
+			if (index == trigger)
+				that.creationTriggers[index] = !val;
+			else
+				that.creationTriggers[index] = false;
+
+			if (val == true && that.creationTriggers[index] == false)
+				that._removeCreationDrawable();
+		}
+	}
+
+	this._removeCreationDrawable = function ()
+	{
+		var toDelete = [];
+
+		that.drawables.forEach(function (drawable, index) {
+
+			if (typeof drawable.spawner == "string")
+				toDelete.push(index);
+		});
+
+		toDelete.forEach(function (indexToDelete) {
+			that.drawables.splice(indexToDelete, 1);
+		});
+	}
+
 	this.bind();
+	this._loop();
 }
