@@ -5,10 +5,11 @@ function Yaflo(container)
 
 	this.canvas = document.getElementById('screen');
 	this.event = new YafloEvent(this);
+	this.display = new YafloDisplay();
 
 	this.bind = function ()
 	{
-		document.addEventListener('mousemove', that.event.handleEvent, true);
+		//document.addEventListener('mousemove', that.event.handleEvent, true);
 	};
 
 	this.bind();
