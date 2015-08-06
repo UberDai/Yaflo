@@ -24,6 +24,5 @@ function YafloEvent(yaflo)
 
 	this.onMouseMove = function (e)
 	{
-		c(e.canvasX, e.canvasY, e.inCanvas)
 	};
 }
