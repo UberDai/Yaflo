@@ -134,9 +134,6 @@ function YafloDisplay(yaf)
 			that.translating = e.which == 3 ? false : that.translating;
 			that.selecting = e.which == 1 ? false : that.selecting;
 			that.dragLastPos = {x : 0, y: 0};
-			if (that.selectedObject != null)
-				that.selectedObject.selected = false;
-			that.selectedObject = null;
 		}
 	}
 
@@ -253,13 +250,21 @@ function YafloDisplay(yaf)
 			if (state.collidesWith(e) && ret == false)
 			{
 				that.yaflo.select(states[states.indexOf(state.spawner)]);
-				that.selectedObject = state;
-				state.selected = true;
+
+				if (that.selectedObject != null)
+					that.selectedObject.selected = false;
+				that.selectedObject = state;	
+				that.selectedObject.selected = true;	
 				ret = true;
 			}
 		});
-		ret || that.yaflo.select(that.yaflo);
-		c(ret);
+
+		if (!ret)
+		{
+			that.yaflo.select(that.yaflo);
+			that.selectedObject.selected = false;
+			that.selectedObject = null;
+		}
 		return ret;
 	}
 

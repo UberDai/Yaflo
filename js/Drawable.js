@@ -118,6 +118,12 @@ function updateState(drawable)
 {
 	drawable.x = -drawable.display.x + drawable.origin.x;
 	drawable.y = -drawable.display.y + drawable.origin.y;
+
+	if (drawable.selected && drawable.fontColor != "red")
+		drawable.fontColor = "red";
+	else
+		drawable.fontColor = "black";
+
 }
 
 function drawState(drawable)
