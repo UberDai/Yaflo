@@ -237,16 +237,15 @@ function YafloDisplay(yaf)
 	{
 		var state = that.yaflo.createState();
 
+		// parent, display, x, y, w, h, r)
+
 		this.states.push(
-			new YafloDrawable(
-					state,
-					this,
-					that.mousePos.x - Math.abs(that.x),
-					that.mousePos.y + that.y,
-					30,
-					30
-				)
-			)
+			new YafloDrawable(state, this, {
+				x: that.mousePos.x - Math.abs(that.x),
+				y: that.mousePos.y + that.y,
+				w: 30,
+				h: 30
+			}))
 		;
 
 		that.yaflo.select(that.yaflo.states[that.yaflo.states.length - 1]);
