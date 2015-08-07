@@ -14,12 +14,12 @@ function YafloDrawable(parent, display, args)
 	this.properties			= {};
 	this.visible			= true;
 	this.selected			= false;
-	this.x 					= typeof args !== "undefined" ? args['x'] || 0 : 0;
-	this.y 					= typeof args !== "undefined" ? args['y'] || 0 : 0;
+	this.x 					= (typeof args !== "undefined") ? args['x'] || 0 : 0;
+	this.y 					= (typeof args !== "undefined") ? args['y'] || 0 : 0;
 
 	this._setPropertyFromArgs = function (index, args, def)
 	{
-		that.properties[index] = typeof args !== "undefined" ? args[index] || def : def;
+		that.properties[index] = (typeof args !== "undefined") ? args[index] || def : def;
 	}
 
 	this.draw = function ()
@@ -84,7 +84,9 @@ function YafloDrawable(parent, display, args)
 		{
 			that.updateFunction = updateGrid;
 			that.drawFunction = drawGrid;
-		}	
+		}
+		else
+			alert("wtf");
 	}
 
 	this._init(args);
@@ -192,12 +194,22 @@ function drawTransition(drawable)
 	var end = drawable.properties['endingPoint'];
 
 	ctx.beginPath();
-	ctx.moveTo(drawable.x, drawable.y);
-	ctx.lineTo(end.x, end.y);
+	drawArrow(ctx, drawable.x, drawable.y, end.x, end.y);
 	ctx.stroke();
 }
 
 function collisionTransition(drawable)
 {
-	c("Transition collision");
+}
+
+function drawArrow(context, fromX, fromY, toX, toY)
+{
+    var headlen = 10;
+    var angle = Math.atan2(toY - fromY, toX - fromX);
+
+    context.moveTo(fromX, fromY);
+    context.lineTo(toX, toY);
+    context.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI/6));
+    context.moveTo(toX, toY);
+    context.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI/6));
 }
