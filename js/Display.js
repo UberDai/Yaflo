@@ -5,24 +5,24 @@ function YafloDisplay(yaf)
 {
 	var that = this;
 
-	this.translating = false;
-	this.selecting = false;
-	this.dragLastPos = {x: 0, y: 0};
-	this.yaflo = yaf;
-	this.selectedObject = null;
-	this.mousePos = {x: 0, y: 0};
-	this.canvas = document.getElementById('screen-canvas');
-	this.ctx = this.canvas.getContext("2d");
-	this.event = new YafloDisplayEvent(this);
-	this.creatingState = false;
-	this.creatingTransition = false;
-	this.drawables = [];
-	this.states = [];
-	this.transitions = [];
-	this.zoom = 0;
-	this.x = 0;
-	this.y = 0;
-	this.creationTriggers = {
+	this.yaflo				= yaf;
+	this.canvas				= document.getElementById('screen-canvas');
+	this.ctx				= this.canvas.getContext("2d");
+	this.event				= new YafloDisplayEvent(this);
+	this.translating		= false;
+	this.selecting			= false;
+	this.dragLastPos		= {x: 0, y: 0};
+	this.selectedObject		= null;
+	this.mousePos			= {x: 0, y: 0};
+	this.creatingState		= false;
+	this.creatingTransition	= false;
+	this.drawables			= [];
+	this.states				= [];
+	this.transitions		= [];
+	this.zoom				= 0;
+	this.x					= 0;
+	this.y					= 0;
+	this.creationTriggers	= {
 		state: false,
 		transition : false
 	}
@@ -134,6 +134,18 @@ function YafloDisplay(yaf)
 			that.translating = e.which == 3 ? false : that.translating;
 			that.selecting = e.which == 1 ? false : that.selecting;
 			that.dragLastPos = {x : 0, y: 0};
+		}
+	}
+
+	this.onDoubleClick = function (e)
+	{
+		if (!that.selectedObject)
+			that.addStateAtMousePosition(e);
+		else if (that.selectedObject.spawner instanceof YafloState)
+		{
+			c("Create transition");
+			//that._updateCreationTriggers("transition");
+			//that.drawables.push(new YafloDrawable("transition", that));
 		}
 	}
 
@@ -262,7 +274,8 @@ function YafloDisplay(yaf)
 		if (!ret)
 		{
 			that.yaflo.select(that.yaflo);
-			that.selectedObject.selected = false;
+			if (that.selectedObject)
+				that.selectedObject.selected = false;
 			that.selectedObject = null;
 		}
 		return ret;
@@ -275,9 +288,8 @@ function YafloDisplay(yaf)
 			c("No selected object to drag");
 			return ;
 		}
-		that.selectedObject.origin.x = that.mousePos.x + that.x;
-		that.selectedObject.origin.y = that.mousePos.y + that.y;
-		c("kek", that.mousePos, that.selectedObject);
+		that.selectedObject.properties['origin'].x = that.mousePos.x + that.x;
+		that.selectedObject.properties['origin'].y = that.mousePos.y + that.y;
 	}
 
 	this.drawables.push(new YafloDrawable("grid", this));

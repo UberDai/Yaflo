@@ -28,7 +28,7 @@ function YafloDisplayEvent(yaflo)
 		else if (e.type == 'mouseup')
 			displayer.onMouseUp(e);
 		else if (e.type == 'dblclick')
-			displayer.addStateAtMousePosition(e);
+			displayer.onDoubleClick();
 /*		else if (e.type == 'keydown' && e.keyCode == 83)
 			displayer.triggerStateCreation();
 		else if (e.type == 'keydown' && e.keyCode == 84)

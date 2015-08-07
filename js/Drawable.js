@@ -1,57 +1,25 @@
 
 'use strict';
 
-function YafloDrawable(parent, display, x, y, w, h, r)
+function YafloDrawable(parent, display, args)
 {
-	var that = this;
-	var drawFunction = undefined;
-	var updateFunction = undefined;
-	var collisionFunction = undefined;
+	var that				= this;
+	var drawFunction		= undefined;
+	var updateFunction		= undefined;
+	var collisionFunction	= undefined;
 
-	this.display = display;
-	this.ctx = display.ctx;
-	this.spawner = parent;
-	this.visible = true;
-	this.selected = false;
-	this.x = x || 0;
-	this.y = y || 0;
-	this.w = w || 1;
-	this.h = h || 1;
-	this.r = r || 50;
-	this.fontSize = "16px";
-	this.font = "Courier New";
-	this.fontColor = "black";
-	this.origin = {x: this.x, y: this.y};
+	this.display			= display;
+	this.ctx				= display.ctx;
+	this.spawner			= parent;
+	this.properties			= {};
+	this.visible			= true;
+	this.selected			= false;
+	this.x 					= typeof args !== "undefined" ? args['x'] || 0 : 0;
+	this.y 					= typeof args !== "undefined" ? args['y'] || 0 : 0;
 
-	this._determineMethods = function ()
+	this._setPropertyFromArgs = function (index, args, def)
 	{
-		if (that.spawner instanceof YafloState)
-		{
-			that.updateFunction = updateState;
-			that.drawFunction = drawState;
-			that.collisionFunction = collisionState;
-		}
-		else if (that.spawner instanceof YafloTransition)
-		{
-			that.updateFunction = updateTransition;
-			that.drawFunction = drawTransition;
-			that.collisionFunction = collisionTransition;
-		}
-		else if (that.spawner == "state")
-		{
-			that.updateFunction = updateCreatingState;
-			that.drawFunction = drawCreatingState;
-		}
-		else if (that.spawner == "transition")
-		{
-			that.updateFunction = updateCreatingTransition;
-			that.drawFunction = drawCreatingTransition;
-		}
-		else if (that.spawner == "grid")
-		{
-			that.updateFunction = updateGrid;
-			that.drawFunction = drawGrid;
-		}
+		that.properties[index] = typeof args !== "undefined" ? args[index] || def : def;
 	}
 
 	this.draw = function ()
@@ -78,7 +46,45 @@ function YafloDrawable(parent, display, x, y, w, h, r)
 		return false;
 	}
 
-	this._determineMethods();
+	this._init = function (args)
+	{
+		if (that.spawner instanceof YafloState)
+		{
+			that._setPropertyFromArgs('origin', args, {x: that.x, y: that.y});
+			that._setPropertyFromArgs('w', args, 1);
+			that._setPropertyFromArgs('h', args, 1);
+			that._setPropertyFromArgs('r', args, 50);
+			that._setPropertyFromArgs('fontSize', args, "16px");
+			that._setPropertyFromArgs('font', args, "Courier New");
+			that._setPropertyFromArgs('fontColor', args, "black");
+			that.updateFunction = updateState;
+			that.drawFunction = drawState;
+			that.collisionFunction = collisionState;
+		}
+		else if (that.spawner instanceof YafloTransition)
+		{
+			that.updateFunction = updateTransition;
+			that.drawFunction = drawTransition;
+			that.collisionFunction = collisionTransition;
+		}
+		else if (that.spawner == "state")
+		{
+			that.updateFunction = updateCreatingState;
+			that.drawFunction = drawCreatingState;
+		}
+		else if (that.spawner == "transition")
+		{
+			that.updateFunction = updateCreatingTransition;
+			that.drawFunction = drawCreatingTransition;
+		}
+		else if (that.spawner == "grid")
+		{
+			that.updateFunction = updateGrid;
+			that.drawFunction = drawGrid;
+		}	
+	}
+
+	this._init(args);
 }
 
 function updateGrid(drawable)
@@ -105,8 +111,8 @@ function drawGrid(drawable)
 
 function updateCreatingState(drawable)
 {
-	drawable.x = drawable.display.mousePos.x + Math.round(drawable.w / 2);
-	drawable.y = drawable.display.mousePos.y - Math.round(drawable.h / 2);
+	drawable.x = drawable.display.mousePos.x + Math.round(drawable.properties['w'] / 2);
+	drawable.y = drawable.display.mousePos.y - Math.round(drawable.properties['h'] / 2);
 }
 
 function drawCreatingState(drawable)
@@ -116,13 +122,13 @@ function drawCreatingState(drawable)
 
 function updateState(drawable)
 {
-	drawable.x = -drawable.display.x + drawable.origin.x;
-	drawable.y = -drawable.display.y + drawable.origin.y;
+	drawable.x = -drawable.display.x + drawable.properties['origin'].x;
+	drawable.y = -drawable.display.y + drawable.properties['origin'].y;
 
-	if (drawable.selected && drawable.fontColor != "red")
-		drawable.fontColor = "red";
+	if (drawable.selected && drawable.properties['fontColor'] != "red")
+		drawable.properties['fontColor'] = "red";
 	else
-		drawable.fontColor = "black";
+		drawable.properties['fontColor'] = "black";
 
 }
 
@@ -133,11 +139,11 @@ function drawState(drawable)
 	var state = drawable.spawner;
 
 	ctx.beginPath();
-	ctx.arc(drawable.x, drawable.y, drawable.r, 0, 2 * Math.PI);
+	ctx.arc(drawable.x, drawable.y, drawable.properties['r'], 0, 2 * Math.PI);
 	ctx.stroke();
 
-	ctx.fillStyle = drawable.fontColor;
-	ctx.font = drawable.fontSize + " " + drawable.font;
+	ctx.fillStyle = drawable.properties['fontColor'];
+	ctx.font = drawable.properties['fontSize'] + " " + drawable.properties['font'];
 
 	var nameSizeOnCanvas = ctx.measureText(state.name);
 	ctx.fillText(state.name, drawable.x - Math.round(nameSizeOnCanvas.width / 2), drawable.y + 4);
@@ -145,8 +151,13 @@ function drawState(drawable)
 
 function collisionState(drawable, e)
 {
-	if (Math.sqrt((drawable.x - e.canvasX) * (drawable.x - e.canvasX) + (drawable.y - e.canvasY) * (drawable.y - e.canvasY)) < (drawable.r + 2))
+	if (
+		Math.sqrt((drawable.x - e.canvasX) * (drawable.x - e.canvasX)
+			+ (drawable.y - e.canvasY) * (drawable.y - e.canvasY))
+		< (drawable.properties['r'] + 2)
+	) {
 		return true;
+	}
 	return false;
 }
 
