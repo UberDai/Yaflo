@@ -235,10 +235,14 @@ function drawTransition(drawable)
 {
 	var ctx = drawable.ctx;
 	var end = drawable.properties['endingPoint'];
+	var strokeStyle = ctx.strokeStyle;
 
 	ctx.beginPath();
 	drawArrow(ctx, drawable.x, drawable.y, end.x, end.y);
+	if (drawable.selected)
+		ctx.strokeStyle = "#ff0000";
 	ctx.stroke();
+	ctx.strokeStyle = strokeStyle;
 }
 
 function getMaxXFromTwoPoints(pointA, pointB)
