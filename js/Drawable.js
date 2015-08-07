@@ -7,6 +7,7 @@ function YafloDrawable(parent, display, args)
 	this.drawFunction		= undefined;
 	this.updateFunction		= undefined;
 	this.collisionFunction	= undefined;
+	this.destroyFunction	= undefined;
 	this.display			= display;
 	this.ctx				= display.ctx;
 	this.spawner			= parent;
@@ -45,6 +46,14 @@ function YafloDrawable(parent, display, args)
 		return false;
 	}
 
+	this.destroy = function ()
+	{
+		if (that.destroyFunction != undefined)
+			that.destroyFunction(that);
+		else
+			c("No destroy function linked to this drawable");
+	}
+
 	this._init = function (args)
 	{
 		if (that.spawner instanceof YafloState)
@@ -64,6 +73,23 @@ function YafloDrawable(parent, display, args)
 	this._init(args);
 }
 
+function destroyState(drawable)
+{
+	var drawableStates = drawable.display.states;
+
+	drawableStates.removeElement(drawable);
+	drawable.display.yaflo.states.removeElement(drawable.spawner);
+}
+
+function destroyTransition(drawable)
+{
+	var drawableTransitions = drawable.display.transitions;
+	var drawableHostState = drawable.properties['origin'];
+
+	drawableTransitions.removeElement(drawable);
+	drawableHostState.spawner.removeTransition(drawable.spawner);
+}
+
 function initState(drawable, args)
 {
 	drawable.setPropertyFromArgs('origin', args, {x: drawable.x, y: drawable.y});
@@ -76,6 +102,7 @@ function initState(drawable, args)
 	drawable.updateFunction = updateState;
 	drawable.drawFunction = drawState;
 	drawable.collisionFunction = collisionState;
+	drawable.destroyFunction = destroyState;
 }
 
 function initTransition(drawable, args)
@@ -86,6 +113,7 @@ function initTransition(drawable, args)
 	drawable.updateFunction = updateTransition;
 	drawable.drawFunction = drawTransition;
 	drawable.collisionFunction = collisionTransition;
+	drawable.destroyFunction = destroyTransition;
 }
 
 function initPrevisuState(drawable, args)

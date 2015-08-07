@@ -29,5 +29,7 @@ function YafloDisplayEvent(yaflo)
 			displayer.onMouseUp(e);
 		else if (e.type == 'dblclick')
 			displayer.onDoubleClick();
+		else if (e.type == 'keydown' && e.keyCode == 46)
+			displayer.deleteSelectedElement();
 	};
 }
