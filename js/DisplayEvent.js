@@ -29,9 +29,5 @@ function YafloDisplayEvent(yaflo)
 			displayer.onMouseUp(e);
 		else if (e.type == 'dblclick')
 			displayer.onDoubleClick();
-/*		else if (e.type == 'keydown' && e.keyCode == 83)
-			displayer.triggerStateCreation();
-		else if (e.type == 'keydown' && e.keyCode == 84)
-			displayer.triggerTransitionCreation();*/
 	};
 }

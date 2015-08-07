@@ -16,7 +16,7 @@ function YafloDisplay(yaf)
 	this.mousePos			= {x: 0, y: 0};
 	this.creatingState		= false;
 	this.creatingTransition	= false;
-	this.drawables			= [];
+	this.temporaries			= [];
 	this.states				= [];
 	this.transitions		= [];
 	this.zoom				= 0;
@@ -46,7 +46,7 @@ function YafloDisplay(yaf)
 		that._updateCreationTriggers("state");
 
 		if (that.creationTriggers.state == true)
-			that.drawables.push(new YafloDrawable("state", that));
+			that.temporaries.push(new YafloDrawable("state", that));
 	}
 
 	this.triggerTransitionCreation = function ()
@@ -54,7 +54,7 @@ function YafloDisplay(yaf)
 		that._updateCreationTriggers("transition");
 
 		if (that.creationTriggers.transition == true)
-			that.drawables.push(new YafloDrawable("transition", that));
+			that.temporaries.push(new YafloDrawable("transition", that));
 	}
 
 	this.translateWorld = function (e)
@@ -76,13 +76,11 @@ function YafloDisplay(yaf)
 
 	this.bind = function ()
 	{
-		that.canvas.addEventListener('onContextMenu', that.event.handleEvent, true);
 		that.canvas.addEventListener('dblclick', that.event.handleEvent, true);
 		that.canvas.addEventListener('mousedown', that.event.handleEvent, true);
 		that.canvas.addEventListener('mouseup', that.event.handleEvent, true);
 		that.canvas.addEventListener('mousemove', that.event.handleEvent, true);
 		that.canvas.addEventListener('mousewheel', that.event.handleEvent, true);
-		document.addEventListener('keydown', that.event.handleEvent, true);
 	}
 
 	this.onMouseMove = function (e)
@@ -145,7 +143,7 @@ function YafloDisplay(yaf)
 		{
 			c("Create transition");
 			//that._updateCreationTriggers("transition");
-			//that.drawables.push(new YafloDrawable("transition", that));
+			//that.temporaries.push(new YafloDrawable("transition", that));
 		}
 	}
 
@@ -158,7 +156,7 @@ function YafloDisplay(yaf)
 		that.transitions.forEach(function (drawable) {
 			drawable.draw();
 		});
-		that.drawables.forEach(function (drawable) {
+		that.temporaries.forEach(function (drawable) {
 			drawable.draw();
 		});
 	}
@@ -172,7 +170,7 @@ function YafloDisplay(yaf)
 		that.transitions.forEach(function (drawable) {
 			drawable.update();
 		});
-		that.drawables.forEach(function (drawable) {
+		that.temporaries.forEach(function (drawable) {
 			drawable.update();
 		});
 	}
@@ -214,14 +212,14 @@ function YafloDisplay(yaf)
 	{
 		var toDelete = [];
 
-		that.drawables.forEach(function (drawable, index) {
+		that.temporaries.forEach(function (drawable, index) {
 
 			if (drawable.spawner == "state" || drawable.spawner == "transition")
 				toDelete.push(index);
 		});
 
 		toDelete.forEach(function (indexToDelete) {
-			that.drawables.splice(indexToDelete, 1);
+			that.temporaries.splice(indexToDelete, 1);
 		});
 	}
 
@@ -237,14 +235,13 @@ function YafloDisplay(yaf)
 	{
 		var state = that.yaflo.createState();
 
-		// parent, display, x, y, w, h, r)
-
 		this.states.push(
 			new YafloDrawable(state, this, {
 				x: that.mousePos.x - Math.abs(that.x),
 				y: that.mousePos.y + that.y,
 				w: 30,
-				h: 30
+				h: 30,
+				r: 100
 			}))
 		;
 
@@ -291,7 +288,7 @@ function YafloDisplay(yaf)
 		that.selectedObject.properties['origin'].y = that.mousePos.y + that.y;
 	}
 
-	this.drawables.push(new YafloDrawable("grid", this));
+	this.temporaries.push(new YafloDrawable("grid", this));
 	this.bind();
 	this._loop();
 }
