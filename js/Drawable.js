@@ -63,6 +63,8 @@ function YafloDrawable(parent, display, args)
 		}
 		else if (that.spawner instanceof YafloTransition)
 		{
+			that._setPropertyFromArgs('origin', args, null);
+			that._setPropertyFromArgs('destination', args, null);
 			that.updateFunction = updateTransition;
 			that.drawFunction = drawTransition;
 			that.collisionFunction = collisionTransition;
@@ -74,6 +76,7 @@ function YafloDrawable(parent, display, args)
 		}
 		else if (that.spawner == "transition")
 		{
+			that._setPropertyFromArgs('origin', args, null);
 			that.updateFunction = updateCreatingTransition;
 			that.drawFunction = drawCreatingTransition;
 		}
@@ -161,22 +164,40 @@ function collisionState(drawable, e)
 	return false;
 }
 
-function updateTransition(drawable)
-{
-	c("Update transition");
-}
-
 function updateCreatingTransition(drawable)
 {
-	c("Update creating transition");
+	drawable.x = drawable.properties['origin'].x;
+	drawable.y = drawable.properties['origin'].y;
+	drawable.properties['endingPoint'] = {x: drawable.display.mousePos.x, y: drawable.display.mousePos.y};
+}
+
+
+function drawCreatingTransition(drawable)
+{
+	drawTransition(drawable);
+}
+
+function updateTransition(drawable)
+{
+	var dest = drawable.properties['destination'];
+
+	drawable.x = drawable.properties['origin'].x;
+	drawable.y = drawable.properties['origin'].y;
+	drawable.properties['endingPoint'] = {x: dest.x, y: dest.y};
 }
 
 function drawTransition(drawable)
 {
-	c("Draw transition");
+	var ctx = drawable.ctx;
+	var end = drawable.properties['endingPoint'];
+
+	ctx.beginPath();
+	ctx.moveTo(drawable.x, drawable.y);
+	ctx.lineTo(end.x, end.y);
+	ctx.stroke();
 }
 
-function drawCreatingTransition(drawable)
+function collisionTransition(drawable)
 {
-	c("Draw creating transition");
+	c("Transition collision");
 }

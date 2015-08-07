@@ -35,7 +35,6 @@ function YafloDisplay(yaf)
 		if (that.yaflo.states.length != that.states.length)
 		{
 			that.yaflo.states.forEach(function (state) {
-
 				that.states.push(new YafloDrawable(state, that));
 			});
 		}
@@ -51,10 +50,13 @@ function YafloDisplay(yaf)
 
 	this.triggerTransitionCreation = function ()
 	{
+		if (!that.selectedObject instanceof YafloState)
+			return ;
+
 		that._updateCreationTriggers("transition");
 
 		if (that.creationTriggers.transition == true)
-			that.temporaries.push(new YafloDrawable("transition", that));
+			that.temporaries.push(new YafloDrawable("transition", that, {origin: that.selectedObject}));
 	}
 
 	this.translateWorld = function (e)
@@ -104,11 +106,29 @@ function YafloDisplay(yaf)
 
 	this.onMouseDown = function (e)
 	{
-		if (that._creationTriggerOn() && e.which == 1)
+		if (e.which == 1 && that.creationTriggers.transition)
 		{
+			that.states.forEach(function (state) {
+
+				if (state.collidesWith(e))
+				{
+					if (that.selectedObject != state)
+					{
+						c("dfsd");
+						var originState = that.selectedObject.spawner;
+						originState.linkTo(state.spawner);
+						var index = originState.transitions.length - 1;
+						that.transitions.push(new YafloDrawable(originState.transitions[index], that, {
+								origin: that.selectedObject,
+								destination: state
+							}))
+						;
+					}
+					c("...");
+				}
+			});
+			that._updateCreationTriggers("transition");
 			that._removeCreationDrawable();
-			that.addStateAtMousePosition(e);
-			that._updateCreationTriggers("");
 		}
 
 		if (e.which == 3 || e.which == 1)
@@ -141,9 +161,7 @@ function YafloDisplay(yaf)
 			that.addStateAtMousePosition(e);
 		else if (that.selectedObject.spawner instanceof YafloState)
 		{
-			c("Create transition");
-			//that._updateCreationTriggers("transition");
-			//that.temporaries.push(new YafloDrawable("transition", that));
+			that.triggerTransitionCreation();
 		}
 	}
 
@@ -261,6 +279,7 @@ function YafloDisplay(yaf)
 
 				if (that.selectedObject != null)
 					that.selectedObject.selected = false;
+				c("here");
 				that.selectedObject = state;	
 				that.selectedObject.selected = true;	
 				ret = true;
