@@ -4,10 +4,9 @@
 function YafloDrawable(parent, display, args)
 {
 	var that				= this;
-	var drawFunction		= undefined;
-	var updateFunction		= undefined;
-	var collisionFunction	= undefined;
-
+	this.drawFunction		= undefined;
+	this.updateFunction		= undefined;
+	this.collisionFunction	= undefined;
 	this.display			= display;
 	this.ctx				= display.ctx;
 	this.spawner			= parent;
@@ -17,7 +16,7 @@ function YafloDrawable(parent, display, args)
 	this.x 					= (typeof args !== "undefined") ? args['x'] || 0 : 0;
 	this.y 					= (typeof args !== "undefined") ? args['y'] || 0 : 0;
 
-	this._setPropertyFromArgs = function (index, args, def)
+	this.setPropertyFromArgs = function (index, args, def)
 	{
 		that.properties[index] = (typeof args !== "undefined") ? args[index] || def : def;
 	}
@@ -49,48 +48,63 @@ function YafloDrawable(parent, display, args)
 	this._init = function (args)
 	{
 		if (that.spawner instanceof YafloState)
-		{
-			that._setPropertyFromArgs('origin', args, {x: that.x, y: that.y});
-			that._setPropertyFromArgs('w', args, 1);
-			that._setPropertyFromArgs('h', args, 1);
-			that._setPropertyFromArgs('r', args, 50);
-			that._setPropertyFromArgs('fontSize', args, "16px");
-			that._setPropertyFromArgs('font', args, "Courier New");
-			that._setPropertyFromArgs('fontColor', args, "black");
-			that.updateFunction = updateState;
-			that.drawFunction = drawState;
-			that.collisionFunction = collisionState;
-		}
+			initState(that, args);
 		else if (that.spawner instanceof YafloTransition)
-		{
-			that._setPropertyFromArgs('origin', args, null);
-			that._setPropertyFromArgs('destination', args, null);
-			that._setPropertyFromArgs('distanceThreshold', args, 15);
-			that.updateFunction = updateTransition;
-			that.drawFunction = drawTransition;
-			that.collisionFunction = collisionTransition;
-		}
+			initTransition(that, args);
 		else if (that.spawner == "previsualisation state")
-		{
-			that.updateFunction = updateCreatingState;
-			that.drawFunction = drawCreatingState;
-		}
+			initPrevisuState(that, args);
 		else if (that.spawner == "previsualisation transition")
-		{
-			that._setPropertyFromArgs('origin', args, null);
-			that.updateFunction = updateCreatingTransition;
-			that.drawFunction = drawCreatingTransition;
-		}
+			initPrevisuTransition(that, args);
 		else if (that.spawner == "grid")
-		{
-			that.updateFunction = updateGrid;
-			that.drawFunction = drawGrid;
-		}
+			initGrid(that, args);
 		else
 			alert("wtf");
 	}
 
 	this._init(args);
+}
+
+function initState(drawable, args)
+{
+	drawable.setPropertyFromArgs('origin', args, {x: drawable.x, y: drawable.y});
+	drawable.setPropertyFromArgs('w', args, 1);
+	drawable.setPropertyFromArgs('h', args, 1);
+	drawable.setPropertyFromArgs('r', args, 50);
+	drawable.setPropertyFromArgs('fontSize', args, "16px");
+	drawable.setPropertyFromArgs('font', args, "Courier New");
+	drawable.setPropertyFromArgs('fontColor', args, "black");
+	drawable.updateFunction = updateState;
+	drawable.drawFunction = drawState;
+	drawable.collisionFunction = collisionState;
+}
+
+function initTransition(drawable, args)
+{
+	drawable.setPropertyFromArgs('origin', args, null);
+	drawable.setPropertyFromArgs('destination', args, null);
+	drawable.setPropertyFromArgs('distanceThreshold', args, 15);
+	drawable.updateFunction = updateTransition;
+	drawable.drawFunction = drawTransition;
+	drawable.collisionFunction = collisionTransition;
+}
+
+function initPrevisuState(drawable, args)
+{
+	drawable.updateFunction = updateCreatingState;
+	drawable.drawFunction = drawCreatingState;
+}
+
+function initPrevisuTransition(drawable, args)
+{
+	drawable.setPropertyFromArgs('origin', args, null);
+	drawable.updateFunction = updateCreatingTransition;
+	drawable.drawFunction = drawCreatingTransition;
+}
+
+function initGrid(drawable, args)
+{
+	drawable.updateFunction = updateGrid;
+	drawable.drawFunction = drawGrid;
 }
 
 function updateGrid(drawable)
