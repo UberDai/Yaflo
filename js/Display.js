@@ -203,7 +203,7 @@ function YafloDisplay(yaf)
 		that.transitions.forEach(function (drawable) {
 			drawable.draw();
 		});
-		that.temporaries.forEach(function (drawable) {
+		that.temporaries.forEach(function (drawable) {	
 			drawable.draw();
 		});
 	}
@@ -309,6 +309,23 @@ function YafloDisplay(yaf)
 				if (that.selectedObject != null)
 					that.selectedObject.selected = false;
 				that.selectedObject = state;	
+				that.selectedObject.selected = true;	
+				ret = true;
+			}
+		});
+
+		if (ret == true)
+			return true;
+
+		that.transitions.forEach(function (transition) {
+
+			if (transition.collidesWith(e) && ret == false)
+			{
+				that.yaflo.select(transition.spawner);
+
+				if (that.selectedObject != null)
+					that.selectedObject.selected = false;
+				that.selectedObject = transition;	
 				that.selectedObject.selected = true;	
 				ret = true;
 			}

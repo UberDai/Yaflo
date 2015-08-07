@@ -198,8 +198,60 @@ function drawTransition(drawable)
 	ctx.stroke();
 }
 
-function collisionTransition(drawable)
+function getMaxXFromTwoPoints(pointA, pointB)
 {
+	if (pointA.x > pointB.x)
+		return pointA.x;
+	else
+		return pointB.x;
+}
+
+function getMinXFromTwoPoints(pointA, pointB)
+{
+	if (pointA.x < pointB.x)
+		return pointA.x;
+	else
+		return pointB.x;
+}
+
+function getMaxYFromTwoPoints(pointA, pointB)
+{
+	if (pointA.y > pointB.y)
+		return pointA.y;
+	else
+		return pointB.y;
+}
+
+function getMinYFromTwoPoints(pointA, pointB)
+{
+	if (pointA.y < pointB.y)
+		return pointA.y;
+	else
+		return pointB.y;
+}
+
+function collisionTransition(drawable, e)
+{
+	var mousePos = drawable.display.mousePos;
+	var max = {
+		x: getMaxXFromTwoPoints(drawable.properties['origin'], drawable.properties['destination']),
+		y: getMaxYFromTwoPoints(drawable.properties['origin'], drawable.properties['destination'])
+	};
+	var min = {
+		x: getMinXFromTwoPoints(drawable.properties['origin'], drawable.properties['destination']),
+		y: getMinYFromTwoPoints(drawable.properties['origin'], drawable.properties['destination'])
+	};
+
+	if (
+		!((mousePos.x <= max.x && mousePos.x >= min.x && mousePos.y <= max.y && mousePos.y >= min.y)
+				|| (max.x == min.x && mousePos.y <= max.y && mousePos.y >= min.y)
+				|| (max.y == min.y && mousePos.x <= max.x && mousePos.x >= min.x))
+	) {
+		return false;
+	}
+
+	var distance = perpendicularDistance(drawable.properties['origin'], drawable.properties['destination'], drawable.display.mousePos);
+	return distance <= 3 ? true : false;
 }
 
 function drawArrow(context, fromX, fromY, toX, toY)
@@ -212,4 +264,11 @@ function drawArrow(context, fromX, fromY, toX, toY)
     context.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI/6));
     context.moveTo(toX, toY);
     context.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI/6));
+}
+
+function perpendicularDistance(lineA, lineB, point)
+{
+	var nominator = Math.abs((lineB.y - lineA.y) * point.x - (lineB.x - lineA.x) * point.y + lineB.x * lineA.y - lineB.y * lineA.x);
+	var denominator = Math.sqrt(Math.pow(lineB.y - lineA.y, 2) + Math.pow(lineB.x - lineA.x, 2));
+	return nominator / denominator;
 }
