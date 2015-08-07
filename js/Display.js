@@ -76,7 +76,7 @@ function YafloDisplay(yaf)
 		that._updateCreationTriggers("state");
 
 		if (that.creationTriggers.state == true)
-			that.temporaries.push(new YafloDrawable("state", that));
+			that.temporaries.push(new YafloDrawable("previsualisation state", that));
 	}
 
 	this.triggerTransitionCreation = function ()
@@ -87,7 +87,7 @@ function YafloDisplay(yaf)
 		that._updateCreationTriggers("transition");
 
 		if (that.creationTriggers.transition == true)
-			that.temporaries.push(new YafloDrawable("transition", that, {origin: that.selectedObject}));
+			that.temporaries.push(new YafloDrawable("previsualisation transition", that, {origin: that.selectedObject}));
 	}
 
 	this.translateWorld = function (e)
@@ -261,7 +261,7 @@ function YafloDisplay(yaf)
 
 		that.temporaries.forEach(function (drawable, index) {
 
-			if (drawable.spawner == "state" || drawable.spawner == "transition")
+			if (drawable.spawner == "previsualisation state" || drawable.spawner == "previsualisation transition")
 				toDelete.push(index);
 		});
 

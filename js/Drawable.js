@@ -65,16 +65,17 @@ function YafloDrawable(parent, display, args)
 		{
 			that._setPropertyFromArgs('origin', args, null);
 			that._setPropertyFromArgs('destination', args, null);
+			that._setPropertyFromArgs('distanceThreshold', args, 15);
 			that.updateFunction = updateTransition;
 			that.drawFunction = drawTransition;
 			that.collisionFunction = collisionTransition;
 		}
-		else if (that.spawner == "state")
+		else if (that.spawner == "previsualisation state")
 		{
 			that.updateFunction = updateCreatingState;
 			that.drawFunction = drawCreatingState;
 		}
-		else if (that.spawner == "transition")
+		else if (that.spawner == "previsualisation transition")
 		{
 			that._setPropertyFromArgs('origin', args, null);
 			that.updateFunction = updateCreatingTransition;
@@ -251,7 +252,7 @@ function collisionTransition(drawable, e)
 	}
 
 	var distance = perpendicularDistance(drawable.properties['origin'], drawable.properties['destination'], drawable.display.mousePos);
-	return distance <= 3 ? true : false;
+	return distance <= drawable.properties['distanceThreshold'] ? true : false;
 }
 
 function drawArrow(context, fromX, fromY, toX, toY)
