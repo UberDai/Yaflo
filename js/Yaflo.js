@@ -9,6 +9,7 @@ function Yaflo(config)
 	this.config = config;
 	this.canvas = config.container.querySelector('[data-role="canvas"]');
 	this.event = new YafloEvent(this);
+	this.display = new YafloDisplay(this);
 	this.properties = new YafloProperties(this);
 	this.simulator = new YafloSimulator(this);
 
@@ -20,7 +21,7 @@ function Yaflo(config)
 
 	this.bind = function ()
 	{
-		document.addEventListener('mousemove', that.event.handleEvent, true);
+		//document.addEventListener('mousemove', that.event.handleEvent, true);
 	};
 
 	this.createState = function ()

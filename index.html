@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 	<title>Yaflo</title>
@@ -8,7 +9,7 @@
 	<div class="yaflo-container">
 		<div id="yaflo">
 			<div class="screen">
-				<canvas data-role="canvas"></canvas>
+				<canvas id="screen-canvas" data-role="canvas" oncontextmenu="return false;"></canvas>
 			</div>
 		</div>
 	</div>
@@ -16,9 +17,10 @@
 	<script type="text/javascript" src="dat.gui.min.js"></script>
 	<script type="text/javascript" src="underscore.js"></script>
 	<script type="text/javascript" src="js/util.js"></script>
+	<script type="text/javascript" src="js/Display.js"></script>
+	<script type="text/javascript" src="js/DisplayEvent.js"></script>
 	<script type="text/javascript" src="js/State.js"></script>
 	<script type="text/javascript" src="js/Transition.js"></script>
-	<script type="text/javascript" src="js/Display.js"></script>
 	<script type="text/javascript" src="js/Drawable.js"></script>
 	<script type="text/javascript" src="js/Event.js"></script>
 	<script type="text/javascript" src="js/TransitionCondition.js"></script>

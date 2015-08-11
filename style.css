@@ -23,7 +23,6 @@ html, body
 	#yaflo .screen
 	{
 		height: 100%;
-		background-color: blue;
 		display: table-cell;
 		overflow: hidden;
 	}
