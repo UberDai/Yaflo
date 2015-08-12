@@ -10,6 +10,7 @@ function YafloState(yaflo)
 
 	this.yaflo = yaflo;
 	this.name = 'State '+ yaflostatecount;
+	this.drawable = null;
 	this.transitions = [];
 
 	this._properties = [ 'name' ];

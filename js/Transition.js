@@ -14,6 +14,7 @@ function YafloTransition(fromState, toState)
 	this.priority = 0;
 	this.conditions = [];
 	this.conditions.name = 'Conditions';
+	this.drawable = null;
 
 	this._properties = [ 'name', 'conditions', 'priority' ];
 

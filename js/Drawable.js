@@ -103,6 +103,7 @@ function initState(drawable, args)
 	drawable.drawFunction = drawState;
 	drawable.collisionFunction = collisionState;
 	drawable.destroyFunction = destroyState;
+	drawable.spawner.drawable = drawable;
 }
 
 function initTransition(drawable, args)
@@ -114,6 +115,7 @@ function initTransition(drawable, args)
 	drawable.drawFunction = drawTransition;
 	drawable.collisionFunction = collisionTransition;
 	drawable.destroyFunction = destroyTransition;
+	drawable.spawner.drawable = drawable;
 }
 
 function initPrevisuState(drawable, args)

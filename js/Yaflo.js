@@ -38,8 +38,23 @@ function Yaflo(config)
 
 	this.select = function (object)
 	{
+		var display = that.display;
 		this.selectedObject = object;
 		that.updateProperties();
+
+		if (object.drawable)
+		{
+			if (display.selectedObject != null)
+				display.selectedObject.selected = false;
+			display.selectedObject = object.drawable;
+			display.selectedObject.selected = true;
+		}
+		else if (object == that)
+		{
+			if (display.selectedObject != null)
+				display.selectedObject.selected = false;
+			display.selectedObject = null;
+		}
 	};
 
 	this.updateProperties = function ()
