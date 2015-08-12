@@ -10,26 +10,31 @@ function YafloSimulator(yaflo)
 	this.variables = null;
 	this.delay = 1000;
 	this.currentState = null;
+	this.timer = null;
 	this._properties = [ 'play', 'pause', 'stop', 'nextStep', 'delay', 'variables' ];
 
 	this.play = function ()
 	{
-		if (that.running && that.paused)
-			that.nextStep();
+		that.paused = false;
+
+		if (that.running)
+			return that.nextStep();
 
 		if (that.variables === null)
 			that.getVariables();
 
-		that.paused = false;
+		clearInterval(that.timer);
 		that.running = true;
 		yaflo.updateProperties();
 		that.currentState = yaflo.defaultState;
-		setTimeout(that.nextStep, that.delay);
+		yaflo.select(that.currentState);
+		that.timer = setTimeout(that.nextStep, that.delay);
 	};
 
 	this.pause = function ()
 	{
 		that.paused = true;
+		clearInterval(that.timer);
 	};
 
 	this.stop = function ()
@@ -38,13 +43,11 @@ function YafloSimulator(yaflo)
 		that.running = false;
 		that.paused = false;
 		yaflo.updateProperties();
+		clearInterval(that.timer);
 	};
 
 	this.nextStep = function ()
 	{
-		if (!that.running || that.paused)
-			return ;
-
 		var transitions = that.currentState.transitions;
 		var validTransitions = [];
 		var chosenTransition = null;
@@ -65,7 +68,8 @@ function YafloSimulator(yaflo)
 			yaflo.select(that.currentState);
 		}
 
-		setTimeout(that.nextStep, that.delay);
+		if (that.running && !that.paused)
+			that.timer = setTimeout(that.nextStep, that.delay);
 	};
 
 	this.getVariables = function ()
