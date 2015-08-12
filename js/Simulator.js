@@ -44,13 +44,13 @@ function YafloSimulator(yaflo)
 	{
 		if (!that.running || that.paused)
 			return ;
-		
+
 		var transitions = that.currentState.transitions;
 		var validTransitions = [];
 		var chosenTransition = null;
 
 		_.each(transitions, function (transition) {
-			if (transition.isValid())
+			if (transition.isValid(that.variables))
 				validTransitions.push(transition);
 		});
 
@@ -60,9 +60,10 @@ function YafloSimulator(yaflo)
 		});
 
 		if (chosenTransition !== null)
+		{
 			that.currentState = chosenTransition.toState;
-
-		yaflo.select(that.currentState);
+			yaflo.select(that.currentState);
+		}
 
 		setTimeout(that.nextStep, that.delay);
 	};
