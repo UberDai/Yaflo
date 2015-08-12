@@ -42,6 +42,9 @@ function YafloSimulator(yaflo)
 
 	this.nextStep = function ()
 	{
+		if (!that.running || that.paused)
+			return ;
+		
 		var transitions = that.currentState.transitions;
 		var validTransitions = [];
 		var chosenTransition = null;
@@ -59,10 +62,9 @@ function YafloSimulator(yaflo)
 		if (chosenTransition !== null)
 			that.currentState = chosenTransition.toState;
 
-		c('Current state is now '+ that.currentState.name);
+		yaflo.select(that.currentState);
 
-		if (that.paused === false)
-			setTimeout(that.nextStep, that.delay);
+		setTimeout(that.nextStep, that.delay);
 	};
 
 	this.getVariables = function ()

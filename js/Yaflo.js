@@ -39,7 +39,6 @@ function Yaflo(config)
 	this.select = function (object)
 	{
 		this.selectedObject = object;
-
 		that.updateProperties();
 	};
 
