@@ -180,7 +180,7 @@ function YafloDisplay(yaf)
 
 	this._draw = function ()
 	{
-		var drawables = [that.temporaries, that.transitions, that.states];
+		var drawables = [that.temporaries, that.states, that.transitions];
 		that._updateCanvasSize();
 
 		if (that.zoom > 0)
@@ -200,7 +200,7 @@ function YafloDisplay(yaf)
 	this._update = function ()
 	{
 		that.loadYaflo();
-		var drawables = [that.temporaries, that.transitions, that.states];
+		var drawables = [that.temporaries, that.states, that.transitions];
 		drawables.forEach(function (drawableArray) {
 			drawableArray.forEach(function (drawable) {
 				drawable.update();

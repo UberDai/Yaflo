@@ -76,18 +76,15 @@ function YafloDrawable(parent, display, args)
 
 function destroyState(drawable)
 {
-	var drawableStates = drawable.display.states;
-
-	drawableStates.removeElement(drawable);
-	drawable.display.yaflo.states.removeElement(drawable.spawner);
+	drawable.display.states = _.without(drawable.display.states, drawable);
+	drawable.display.yaflo.states = _.without(drawable.display.yaflo.states, drawable.spawner);
 }
 
 function destroyTransition(drawable)
 {
-	var drawableTransitions = drawable.display.transitions;
 	var drawableHostState = drawable.properties['origin'];
 
-	drawableTransitions.removeElement(drawable);
+	drawable.display.transitions = _.without(drawable.display.transitions, drawable);
 	drawableHostState.spawner.removeTransition(drawable.spawner);
 }
 

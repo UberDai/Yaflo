@@ -28,10 +28,10 @@ function Yaflo(config)
 	{
 		var state = new YafloState(that);
 
-		that.states.push(state);
-
-		if (that.defaultState === null)
+		if (that.defaultState === null || that.states.length === 0)
 			that.defaultState = state;
+
+		that.states.push(state);
 
 		return state;
 	};
@@ -79,7 +79,7 @@ function Yaflo(config)
 	this.removeVariable = function (name)
 	{
 		delete that.variables[name];
-		that.variables._properties.removeElement(name);
+		that.variables._properties = _.without(that.variables._properties, name);
 	};
 
 	this.bind();
