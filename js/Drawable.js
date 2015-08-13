@@ -221,7 +221,25 @@ function updateCreatingTransition(drawable)
 
 function drawCreatingTransition(drawable)
 {
-	drawTransition(drawable);
+	var ctx = drawable.ctx;
+	var end = drawable.properties['endingPoint'];
+	var radius = 50;
+	var vector = new Vector(drawable, end);
+	var normalized = vector.normalize();
+
+	var start = {
+		x: drawable.x + normalized.x * radius,
+		y: drawable.y + normalized.y * radius
+	};
+
+	var strokeStyle = ctx.strokeStyle;
+
+	ctx.beginPath();
+	drawArrow(ctx, start.x, start.y, end.x, end.y);
+	if (drawable.selected)
+		ctx.strokeStyle = "#ff0000";
+	ctx.stroke();
+	ctx.strokeStyle = strokeStyle;
 }
 
 function updateTransition(drawable)
@@ -236,11 +254,24 @@ function updateTransition(drawable)
 function drawTransition(drawable)
 {
 	var ctx = drawable.ctx;
-	var end = drawable.properties['endingPoint'];
+	var targetCenter = drawable.properties['endingPoint'];
+	var radius = 50;
+	var vector = new Vector(drawable, targetCenter);
+	var normalized = vector.normalize();
+
+	var start = {
+		x: drawable.x + normalized.x * radius,
+		y: drawable.y + normalized.y * radius
+	};
+
+	var end = {
+		x: targetCenter.x - normalized.x * radius,
+		y: targetCenter.y - normalized.y * radius
+	};
 	var strokeStyle = ctx.strokeStyle;
 
 	ctx.beginPath();
-	drawArrow(ctx, drawable.x, drawable.y, end.x, end.y);
+	drawArrow(ctx, start.x, start.y, end.x, end.y);
 	if (drawable.selected)
 		ctx.strokeStyle = "#ff0000";
 	ctx.stroke();
@@ -300,7 +331,7 @@ function collisionTransition(drawable, e)
 	}
 
 	var distance = perpendicularDistance(drawable.properties['origin'], drawable.properties['destination'], drawable.display.mousePos);
-	return distance <= drawable.properties['distanceThreshold'] ? true : false;
+	return distance <= drawable.properties['distanceThreshold'];
 }
 
 function drawArrow(context, fromX, fromY, toX, toY)

@@ -19,7 +19,7 @@ function YafloDisplay(yaf)
 	this.temporaries		= [];
 	this.states				= [];
 	this.transitions		= [];
-	this.zoom				= 0;
+	this.zoom				= 1;
 	this.x					= 0;
 	this.y					= 0;
 	this.creationTriggers	= {
@@ -183,6 +183,14 @@ function YafloDisplay(yaf)
 	{
 		var drawables = [that.states, that.transitions, that.temporaries];
 		that._updateCanvasSize();
+
+		if (that.zoom > 0)
+			that.ctx.scale(that.zoom, that.zoom);
+		else if (that.zoom < 0)
+			that.ctx.scale(0.5, 0.5);
+		else
+			that.ctx.scale(1, 1);
+
 		drawables.forEach(function (drawableArray) {
 			drawableArray.forEach(function (drawable) {
 				drawable.draw();
