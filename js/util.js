@@ -16,33 +16,6 @@ Number.prototype.clamp = function (min, max)
     return Math.min(Math.max(this, min), max);
 };
 
-Object.prototype.removeElement = function (element)
-{
-	var index = this.indexOf(element);
-
-	if (index === -1)
-		return false;
-
-	this.splice(index, 1);
-
-	return true;
-}
-
-Object.prototype.forEach = function (callback)
-{
-	var exclude = [ 'removeElement', 'forEach' ];
-	var i = 0;
-
-	for (var key in this)
-	{
-		if (exclude.indexOf(key) != -1)
-			continue;
-
-		if (callback(i, this[key]) === false)
-			return ;
-	}
-};
-
 String.prototype.humanize = function ()
 {
 	var str = this;

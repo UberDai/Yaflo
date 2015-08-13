@@ -16,6 +16,7 @@ function YafloDrawable(parent, display, args)
 	this.selected			= false;
 	this.x 					= (typeof args !== "undefined") ? args['x'] || 0 : 0;
 	this.y 					= (typeof args !== "undefined") ? args['y'] || 0 : 0;
+	this.parent				= parent;
 
 	this.setPropertyFromArgs = function (index, args, def)
 	{
@@ -64,8 +65,8 @@ function YafloDrawable(parent, display, args)
 			initPrevisuState(that, args);
 		else if (that.spawner == "previsualisation transition")
 			initPrevisuTransition(that, args);
-		else if (that.spawner == "grid")
-			initGrid(that, args);
+		else if (that.spawner == "background")
+			initBackground(that, args);
 		else
 			alert("wtf");
 	}
@@ -131,31 +132,35 @@ function initPrevisuTransition(drawable, args)
 	drawable.drawFunction = drawCreatingTransition;
 }
 
-function initGrid(drawable, args)
+function initBackground(drawable, args)
 {
-	drawable.updateFunction = updateGrid;
-	drawable.drawFunction = drawGrid;
+	drawable.updateFunction = updateBackground;
+	drawable.drawFunction = drawBackground;
 }
 
-function updateGrid(drawable)
+function updateBackground(drawable)
 {
-	drawable.x = -drawable.display.x;
-	drawable.y = -drawable.display.y;
+	drawable.x = drawable.display.x * -1;
+	drawable.y = drawable.display.y * -1;
 }
 
-function drawGrid(drawable)
+function drawBackground(drawable)
 {
 	var ctx = drawable.ctx;
-	var rekt = drawable.display.canvas.getBoundingClientRect();
+	var canvas = drawable.display.canvas;
 
+	ctx.fillStyle = '#f4f4f4';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	ctx.fillStyle = '#1c1c1c';
 	ctx.beginPath();
 	ctx.moveTo(drawable.x, 0);
-	ctx.lineTo(drawable.x, rekt.height);
+	ctx.lineTo(drawable.x, canvas.height);
 	ctx.stroke();
 
 	ctx.beginPath();
 	ctx.moveTo(0, drawable.y);
-	ctx.lineTo(rekt.width, drawable.y);
+	ctx.lineTo(canvas.width, drawable.y);
 	ctx.stroke();
 }
 
@@ -175,11 +180,8 @@ function updateState(drawable)
 	drawable.x = -drawable.display.x + drawable.properties['origin'].x;
 	drawable.y = -drawable.display.y + drawable.properties['origin'].y;
 
-	if (drawable.selected && drawable.properties['fontColor'] != "red")
-		drawable.properties['fontColor'] = "red";
-	else
-		drawable.properties['fontColor'] = "black";
-
+	drawable.properties['fontColor'] = "#000000";
+	drawable.properties['backgroundColor'] = (drawable.selected) ? '#c8eaff' : '#ffffff';
 }
 
 function drawState(drawable)
@@ -190,6 +192,25 @@ function drawState(drawable)
 
 	ctx.beginPath();
 	ctx.arc(drawable.x, drawable.y, drawable.properties['r'], 0, 2 * Math.PI);
+	ctx.fillStyle = drawable.properties['backgroundColor'];
+
+	if (drawable.parent === drawable.parent.yaflo.defaultState)
+	{
+		ctx.strokeStyle = '#f03e00';
+		ctx.lineWidth = 2;
+	}
+	else
+	{
+		ctx.strokeStyle = '#000000';
+		ctx.lineWidth = 1;
+	}
+
+	ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+	ctx.shadowBlur = 10;
+	ctx.shadowOffsetX = 0;
+	ctx.shadowOffsetY = 0;
+
+	ctx.fill();
 	ctx.stroke();
 
 	ctx.fillStyle = drawable.properties['fontColor'];

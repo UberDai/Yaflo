@@ -13,8 +13,6 @@ function YafloTransition(fromState, toState)
 	this.toState = toState;
 	this.priority = 0;
 	this.condition = '';
-	// this.conditions = [];
-	// this.conditions.name = 'Conditions';
 
 	this._properties = [ 'name', 'condition', 'priority' ];
 
@@ -23,39 +21,34 @@ function YafloTransition(fromState, toState)
 		if (that.condition.length === 0)
 			return true;
 
-		var func = new Function('return ('+ that.condition +');');
+		var declarations = '';
+		
+		_.each(variables, function (value, key) {
+			if (key[0] == '_')
+				return ;
+			declarations += 'var '+ key +' = '+ JSON.stringify(value) +';';
+		});
+
+		var func = new Function(declarations +'return ('+ that.condition +');');
 
 		return func.apply(variables);
-
-		// var result = true;
-
-		// _.each(that.conditions, function (condition) {
-		// 	if (condition.test() === false)
-		// 	{
-		// 		result = false;
-		// 		return false;
-		// 	}
-		// });
-
-		// return result;
 	};
+
+	this.getVariables = function (variable)
+	{
+		var variables = [];
+
+		_.each(variables, function (_, key) {
+			if (key[0] == '_')
+				return ;
+			variables.push(key);
+		});
+
+		return variables;
+	}
 
 	this.remove = function ()
 	{
 		this.fromState.removeTransition(that);
 	};
-
-	// this.createCondition = function (formula)
-	// {
-	// 	var condition = new YafloTransitionCondition(that, formula);
-
-	// 	that.conditions.push(condition);
-
-	// 	return condition;
-	// };
-
-	// this.removeCondition = function (condition)
-	// {
-	// 	that.conditions.removeElement(condition);
-	// };
 }

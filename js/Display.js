@@ -151,6 +151,7 @@ function YafloDisplay(yaf)
 
 			if (e.which == 1)
 				that.selecting = that._trySelecting(e);
+
 			that.dragLastPos.x = e.canvasX;
 			that.dragLastPos.y = e.canvasY;
 		}
@@ -174,14 +175,12 @@ function YafloDisplay(yaf)
 		if (!that.selectedObject)
 			that.addStateAtMousePosition(e);
 		else if (that.selectedObject.spawner instanceof YafloState)
-		{
 			that.triggerTransitionCreation();
-		}
 	}
 
 	this._draw = function ()
 	{
-		var drawables = [that.states, that.transitions, that.temporaries];
+		var drawables = [that.temporaries, that.transitions, that.states];
 		that._updateCanvasSize();
 
 		if (that.zoom > 0)
@@ -201,7 +200,7 @@ function YafloDisplay(yaf)
 	this._update = function ()
 	{
 		that.loadYaflo();
-		var drawables = [that.states, that.transitions, that.temporaries];
+		var drawables = [that.temporaries, that.transitions, that.states];
 		drawables.forEach(function (drawableArray) {
 			drawableArray.forEach(function (drawable) {
 				drawable.update();
@@ -393,7 +392,7 @@ function YafloDisplay(yaf)
 		that._removeCreationDrawable();
 	}
 
-	this.temporaries.push(new YafloDrawable("grid", this));
+	this.temporaries.push(new YafloDrawable("background", this));
 	this.bind();
 	this._loop();
 }
