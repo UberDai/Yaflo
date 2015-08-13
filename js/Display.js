@@ -284,11 +284,6 @@ function YafloDisplay(yaf)
 			if (state.collidesWith(e) && ret == false)
 			{
 				that.yaflo.select(states[states.indexOf(state.spawner)]);
-
-				if (that.selectedObject != null)
-					that.selectedObject.selected = false;
-				that.selectedObject = state;	
-				that.selectedObject.selected = true;	
 				ret = true;
 			}
 		});
@@ -303,12 +298,7 @@ function YafloDisplay(yaf)
 
 			if (transition.collidesWith(e) && ret == false)
 			{
-				that.yaflo.select(transition.spawner);
-
-				if (that.selectedObject != null)
-					that.selectedObject.selected = false;
-				that.selectedObject = transition;	
-				that.selectedObject.selected = true;	
+				that.yaflo.select(transition.spawner);	
 				ret = true;
 			}
 		});
@@ -318,10 +308,6 @@ function YafloDisplay(yaf)
 	this._selectDefault = function ()
 	{
 		that.yaflo.select(that.yaflo);
-
-		if (that.selectedObject)
-			that.selectedObject.selected = false;
-		that.selectedObject = null;
 	}
 
 	this._trySelecting = function (e)
